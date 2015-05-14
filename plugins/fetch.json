@@ -1,0 +1,59 @@
+{
+    "com.randdusing.bluetoothle": {
+        "source": {
+            "type": "registry",
+            "id": "com.randdusing.bluetoothle"
+        },
+        "is_top_level": true,
+        "variables": {}
+    },
+    "org.apache.cordova.device": {
+        "source": {
+            "type": "registry",
+            "id": "org.apache.cordova.device"
+        },
+        "is_top_level": true,
+        "variables": {}
+    },
+    "org.apache.cordova.dialogs": {
+        "source": {
+            "type": "registry",
+            "id": "org.apache.cordova.dialogs"
+        },
+        "is_top_level": true,
+        "variables": {}
+    },
+    "com.verso.cordova.clipboard": {
+        "source": {
+            "type": "registry",
+            "id": "com.verso.cordova.clipboard"
+        },
+        "is_top_level": true,
+        "variables": {}
+    },
+    "org.apache.cordova.network-information": {
+        "source": {
+            "type": "registry",
+            "id": "org.apache.cordova.network-information"
+        },
+        "is_top_level": true,
+        "variables": {}
+    },
+    "com.pylonproducts.wifiwizard": {
+        "source": {
+            "type": "registry",
+            "id": "com.pylonproducts.wifiwizard"
+        },
+        "is_top_level": true,
+        "variables": {}
+    },
+    "com.tsubik.cordova.start_on_boot": {
+        "source": {
+            "type": "git",
+            "url": "https://github.com/tsubik/cordova-plugin-start-on-boot.git",
+            "subdir": "."
+        },
+        "is_top_level": true,
+        "variables": {}
+    }
+}
