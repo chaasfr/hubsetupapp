@@ -26,8 +26,8 @@ var wifi;
 var ble;
 
 var searchingWifi;
-var connectedWifi;
 var connectingWifi;
+var IP;
 
 var searchingBLE;
 var connectedBLE;
@@ -37,7 +37,7 @@ var connectedNetwork;
 var connectedDeviceBLE;
 
 var SSID= "RF_Almende";
-var password="remcowashier";
+var password;
 var keyType='WPA';
 
 var hub = {
@@ -56,8 +56,8 @@ var hub = {
 	 */
 	start:function() {
 		// set up wifi connection
-		wifi.init(function(enabled) {
-			$('#wifiScanBtn').prop("disabled", !enabled);
+		wifi.init(function(enabledWifi) {
+			$('#wifiScanBtn').prop("disabled", !enabledWifi);
 		});
 		ble.init(function(enabled) {
             $('#findCrownstones').prop("disabled", !enabled);
@@ -139,7 +139,7 @@ var hub = {
 				wanted_name = "";
 				for (var el in map) {
 
-					if (map[el]['name'].indexOf("1984") > -1) {
+					if (map[el]['name'].indexOf("crown") > -1) {
 						wanted_rssi = map[el]['rssi'];
 						wanted_name = map[el]['name'];
                         if (searchingBLE) {
@@ -149,19 +149,27 @@ var hub = {
                         var timeout = 5;
                         connect(el, timeout,
                             function(){
-//                                readWifi(el,
-//                                    function(){
-//                                    console.log("got wifi infos");
-//                                    },
-//                                    function(){
-//                                    console.log("error: couldn't get wifi infos");
-//                                });
-                                connectWifi(SSID,password,keyType,
+                                readWifi(el,
                                     function(){
-                                    console.log("success -- remove me");
+                                    console.log("got wifi infos");
                                     },
                                     function(){
-                                    console.log("faillure -- remove me");
+                                    console.log("error: couldn't get wifi infos");
+                                });
+                                connectWifi(SSID,password,keyType,
+                                    function(){
+                                        wifi.getIP(function(ip){
+                                            IP= ip;
+                                            console.log("IP found= " + IP);
+                                            writeIP(el,function(){
+                                                    console.log("wrote IP");
+                                                },function(){
+                                                    console.log("failed to write IP");
+                                                });
+                                        });
+                                    },
+                                    function(){
+                                        console.log("connectWifi failed");
                                     }
                                 );
                             },
@@ -171,16 +179,6 @@ var hub = {
 
 				$('#wantedCrownstone').html("Wanted Crownstone: <b>" + wanted_name + "</b>");
 
-//				$(document).on("click", "#crownStoneTable tr", function(e) {
-//					console.log('click');
-//					if (searchingBLE) {
-//						searchingBLE = false;
-//						stopSearch();
-//					}
-//					var timeout = 5;
-//					connect(this.id, timeout, gotoControlPage, connectionFailed);
-//					$('#crownstone').show();
-//				})
 			});
 		}
 
@@ -190,7 +188,7 @@ var hub = {
 		}
 
 		stopSearch = function() {
-			$('#findCrownstones').html("Find Crownstones");
+			$('#findCrownstones').html("Restart");
 			console.log("stop search");
 			ble.stopEndlessScan();
 		}
@@ -216,22 +214,36 @@ var hub = {
 
 		connectWifi= function(SSID, password, keyType, successCB, errorCB){
             wifi.connectNetwork(SSID, password, keyType, function(connectedWifi) {
-            if (connectedWifi) successCB;
-            else errorCB;
+                   if(connectedWifi){
+                       successCB();
+                   }
+                   else errorCB();
             });
 		}
 
 		readWifi= function(address,successCB, errorCB){
-        wifiNetwork=ble.readWifi(address,function(success) {
-            if (success) {
-                SSID=wifiNetwork.ssid;
-                password=wifiNetwork.key;
-                if(password!=null) keyType='WPA';
-                successCB();
-            } else {
-                errorCB();
-            }
-        });
+            ble.selectConfiguration(
+                address,
+                configWifiUuid,
+                ble.getConfiguration(
+                    address,
+                    function(configuration){
+                        SSID=bluetoothle.bytesToString(configuration.payload.SSID);
+                        password=bluetoothle.bytesToString(configuration.payload.key);
+                        successCB();
+                    },
+                    errorCB
+                ),
+                errorCB
+            );
+		}
+
+		writeIP=function(address, successCB, errorCB){
+            var configuration= {};
+            configuration.type=configWifiUuid;
+            configuration.length=4;
+            configuration.payload= IP.split('.');
+            ble.writeConfiguration(address,configuration,successCB,errorCB);
 		}
 
 		connectionFailed = function() {

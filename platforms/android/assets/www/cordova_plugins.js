@@ -56,6 +56,13 @@ module.exports = [
         "clobbers": [
             "WifiWizard"
         ]
+    },
+    {
+        "file": "plugins/com.albahra.plugin.networkinterface/www/networkinterface.js",
+        "id": "com.albahra.plugin.networkinterface.networkinterface",
+        "clobbers": [
+            "window.networkinterface"
+        ]
     }
 ];
 module.exports.metadata = 
@@ -67,7 +74,8 @@ module.exports.metadata =
     "org.apache.cordova.dialogs": "0.3.0",
     "org.apache.cordova.network-information": "0.2.15",
     "com.pylonproducts.wifiwizard": "0.2.8",
-    "com.tsubik.cordova.start_on_boot": "1.0.2"
+    "com.tsubik.cordova.start_on_boot": "1.0.2",
+    "com.albahra.plugin.networkinterface": "1.0.7"
 }
 // BOTTOM OF METADATA
 });

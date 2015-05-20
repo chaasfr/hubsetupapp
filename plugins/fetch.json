@@ -55,5 +55,14 @@
         },
         "is_top_level": true,
         "variables": {}
+    },
+    "com.albahra.plugin.networkinterface": {
+        "source": {
+            "type": "git",
+            "url": "https://github.com/salbahra/NetworkInterfacePlugin",
+            "subdir": "."
+        },
+        "is_top_level": true,
+        "variables": {}
     }
 }

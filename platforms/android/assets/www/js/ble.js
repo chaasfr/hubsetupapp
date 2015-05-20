@@ -35,10 +35,20 @@ var currentLimitUuid = '5b8d0005-6f20-11e4-b116-123b93f75cba';
 
 //////////////////////////////////////////////////////////////////////////////
 // Configuration types
-var configNameUuid = 0;
-var configDeviceTypeUuid = 1;
-var configRoomUuid = 2;
-var configFloorUuid = 3;
+var configNameUuid                               = 0x00;
+var configDeviceTypeUuid                         = 0x01;
+var configRoomUuid                               = 0x02;
+var configFloorUuid                              = 0x03;
+var configNearbyTimeoutUuid                      = 0x04;
+var configPWMFreqUuid                            = 0x05;
+var configIBeaconMajorUuid                       = 0x06;
+var configIBeaconMinorUuid                       = 0x07;
+var configIBeaconUuidUuid                        = 0x08;
+var configIBeaconRSSIUuid                        = 0x09;
+var configWifiUuid                               = 0x0A;
+
+var RESERVED = 0xFF;
+
 //////////////////////////////////////////////////////////////////////////////
 
 
@@ -340,8 +350,7 @@ var BLEHandler = function() {
 		}
 	}
 
-	/*
-	 * Contains bug: when a device is in "disconnecting" state, it will never be closed. 
+	/** Contains bug: when a device is in "disconnecting" state, it will never be closed.
 	 */
 	self.disconnectDevice = function(address, successCB, errorCB) {
 		var paramsObj = {"address": address}
@@ -370,8 +379,7 @@ var BLEHandler = function() {
 			paramsObj);
 	}
 
-	self.closeDevice = function(address)
-	{
+	self.closeDevice = function(address){
 		paramsObj = {"address": address};
 		bluetoothle.close(function(obj)	{ // close success
 				if (obj.status == "closed")
@@ -385,29 +393,6 @@ var BLEHandler = function() {
 			}, 
 			function(obj) { // close error
 				console.log("Close error from device " + obj.address + ": " + obj.error + " - " + obj.message);
-			},
-			paramsObj);
-	}
-
-	self.readTemperature = function(address, callback) {
-		console.log("Read temperature at service " + generalServiceUuid + ' and characteristic ' + temperatureCharacteristicUuid);
-		var paramsObj = {"address": address, "serviceUuid": generalServiceUuid, "characteristicUuid": temperatureCharacteristicUuid};
-		bluetoothle.read(function(obj) { // read success
-				if (obj.status == "read")
-				{
-					var temperature = bluetoothle.encodedStringToBytes(obj.value);
-					console.log("temperature: " + temperature[0]);
-
-					callback(temperature[0]);
-				}
-				else
-				{
-					console.log("Unexpected read status: " + obj.status);
-					self.disconnectDevice(address);
-				}
-			}, 
-			function(obj) { // read error
-				console.log('Error in reading temperature: ' + obj.error + " - " + obj.message);
 			},
 			paramsObj);
 	}
@@ -450,164 +435,6 @@ var BLEHandler = function() {
 			}, 
 			function(obj) { // read error
 				console.log('Error in reading device list: ' + obj.error + " - " + obj.message);
-			},
-			paramsObj);
-	}
-
-	self.writePWM = function(address, value, successCB, errorCB) {
-		var u8 = new Uint8Array(1);
-		u8[0] = value;
-		var v = bluetoothle.bytesToEncodedString(u8);
-		console.log("Write " + v + " at service " + powerServiceUuid + ' and characteristic ' + pwmUuid );
-		var paramsObj = {"address": address, "serviceUuid": powerServiceUuid, "characteristicUuid": pwmUuid , "value" : v};
-		bluetoothle.write(function(obj) { // write success
-				if (obj.status == 'written') {
-					console.log('Successfully written to pwm characteristic - ' + obj.status);
-
-					if (successCB) successCB();
-				} else {
-					console.log('Writing to pwm characteristic was not successful' + obj);
-				
-					if (errorCB) errorCB();
-				}
-			},
-			function(obj) { // wrtie error
-				console.log("Error in writing to pwm characteristic: " + obj.error + " - " + obj.message);
-			
-				if (errorCB) errorCB();
-			},
-			paramsObj);
-	}
-
-	self.readPWM = function(address, callback) {
-		console.log("Read current consumption at service " + powerServiceUuid + ' and characteristic ' + pwmUuid);
-		var paramsObj = {"address": address, "serviceUuid": powerServiceUuid, "characteristicUuid": pwmUuid};
-		bluetoothle.read(function(obj) { // read success
-				if (obj.status == "read")
-				{
-					var pwm = bluetoothle.encodedStringToBytes(obj.value);
-					console.log("pwm: " + pwm[0]);
-
-					callback(pwm[0]);
-				}
-				else
-				{
-					console.log("Unexpected read status: " + obj.status);
-					self.disconnectDevice(address);
-				}
-			}, 
-			function(obj) { // read error
-				console.log('Error in reading current consumption: ' + obj.error + " - " + obj.message);
-			},
-			paramsObj);
-	}
-
-	self.readCurrentConsumption = function(address, callback) {
-		console.log("Read current consumption at service " + powerServiceUuid + ' and characteristic ' + currentConsumptionUuid);
-		var paramsObj = {"address": address, "serviceUuid": powerServiceUuid, "characteristicUuid": currentConsumptionUuid};
-		bluetoothle.read(function(obj) { // read success
-				if (obj.status == "read")
-				{
-					var currentConsumption = bluetoothle.encodedStringToBytes(obj.value);
-					console.log("currentConsumption: " + currentConsumption[0]);
-
-					callback(currentConsumption[0]);
-				}
-				else
-				{
-					console.log("Unexpected read status: " + obj.status);
-					self.disconnectDevice(address);
-				}
-			}, 
-			function(obj) { // read error
-				console.log('Error in reading current consumption: ' + obj.error + " - " + obj.message);
-			},
-			paramsObj);
-	}
-
-	self.sampleCurrent = function(address, value, callback) {
-		var u8 = new Uint8Array(1);
-		u8[0] = value;
-		var v = bluetoothle.bytesToEncodedString(u8);
-		console.log("Write " + v + " at service " + powerServiceUuid + ' and characteristic ' + sampleCurrentUuid );
-		var paramsObj = {"address": address, "serviceUuid": powerServiceUuid, "characteristicUuid": sampleCurrentUuid , "value" : v};
-		bluetoothle.write(function(obj) { // write success
-				if (obj.status == 'written') {
-					console.log('Successfully written to sample current characteristic - ' + obj.status);
-
-					if (callback) {
-						callback(true)
-					}
-				} else {
-					console.log('Writing to sample current characteristic was not successful' + obj);
-
-					if (callback) {
-						callback(false)
-					}
-				}
-			},
-			function(obj) { // write error
-				console.log("Error in writing to sample current characteristic: " + obj.error + " - " + obj.message);
-
-				if (callback) {
-					callback(false)
-				}
-			},
-			paramsObj);
-	}
-
-	self.getCurrentCurve = function(address, callback) {
-		console.log("Read current curve at service " + powerServiceUuid + ' and characteristic ' + currentCurveUuid );
-		var paramsObj = {"address": address, "serviceUuid": powerServiceUuid, "characteristicUuid": currentCurveUuid };
-		bluetoothle.read(function(obj) { // read success
-				if (obj.status == "read")
-				{
-					var arr8 = bluetoothle.encodedStringToBytes(obj.value);
-					console.log(JSON.stringify(arr8));
-					if (arr8.length < 2) {
-						console.log("Invalid current curve data (too short): ");
-						console.log(JSON.stringify(arr8));
-						return;
-					}
-					callback(arr8);
-					
-					
-					//if (arr8.length < 2) {
-						//console.log("Invalid current curve data (too short): ");
-						//console.log(JSON.stringify(arr8));
-						//return;
-					//}
-					//var size = (arr8[0] << 8) + arr8[1];
-					//if (size != arr8.length/2-1) {
-						//console.log("Invalid current curve data (size mismatch): ");
-						//console.log(JSON.stringify(arr8));
-						//return;
-					//}
-					//if (size < 1) {
-						//return;
-					//}
-
-					//var arr16 = new Uint16Array(size);
-					//for (var i=0; i<size; ++i) {
-						//// arr16[i] = (arr8[2*i+2] << 8) + arr8[2*i+3];
-						//arr16[i] = (arr8[2*i+2] << 8) + arr8[2*i+3];
-					//}
-					//var arrStr = "";
-					//for (var i=0; i<size; ++i) {
-						//arrStr = arrStr + " " + arr16[i];
-					//}
-					//console.log("Result:" + arrStr);
-
-					//callback(arr16);
-				}
-				else
-				{
-					console.log("Unexpected read status: " + obj.status);
-					self.disconnectDevice(address);
-				}
-			},
-			function(obj) { // read error
-				console.log('Error in reading current curve: ' + obj.error + " - " + obj.message);
 			},
 			paramsObj);
 	}
@@ -662,38 +489,6 @@ var BLEHandler = function() {
 			paramsObj);
 	}
 
-	/** Get a floor from the connected device
-	 */
-	self.getFloor = function(address, successCB, errorCB) {
-		var configurationType = configFloorUuid;
-		self.selectConfiguration(address, configurationType, function(msg) {
-			console.log(msg);
-			self.getConfiguration(
-				address,
-				function(configuration) {
-					if (configuration.length != 1) {
-						var msg = "Configuration value for floor level should have length 1";
-						if (errorCB) errorCB(msg);
-					} else {
-						var floor = configuration.payload[0];
-						successCB(floor);
-					}
-				}, 
-				errorCB
-			);
-		}, errorCB);
-	}
-
-	/* set floor to value
-	 */
-	self.setFloor = function(address, value, successCB, errorCB) {
-		var configuration = {};
-		configuration.type = configFloorUuid;
-		configuration.length = 1;
-		configuration.payload = [value];
-		self.writeConfiguration(address, configuration, successCB, errorCB);
-	}
-
 	/** Get a specific configuration, selected before in selectConfiguration
 	 */
 	self.getConfiguration = function(address, successCB, errorCB) {
@@ -732,7 +527,6 @@ var BLEHandler = function() {
 	}
 
 	/** Writing a configuration
-	 *
 	 */
 	self.writeConfiguration = function(address, configuration, successCB, errorCB) {
 		if (configuration.type != configFloorUuid) {
@@ -813,204 +607,6 @@ var BLEHandler = function() {
 			},
 			paramsObj);
 	}
-
-	self.writeDeviceType = function(address, value) {
-		var u8 = bluetoothle.stringToBytes(value);
-		var v = bluetoothle.bytesToEncodedString(u8);
-		console.log("Write " + v + " at service " + generalServiceUuid + ' and characteristic ' + deviceTypeUuid );
-		var paramsObj = {"address": address, "serviceUuid": generalServiceUuid, "characteristicUuid": deviceTypeUuid , "value" : v};
-		bluetoothle.write(function(obj) { // write success
-				if (obj.status == 'written') {
-					console.log('Successfully written to device type characteristic - ' + obj.status);
-				} else {
-					console.log('Writing to device type characteristic was not successful' + obj);
-				}
-			},
-			function(obj) { // write error
-				console.log("Error in writing to device type characteristic: " + obj.error + " - " + obj.message);
-			},
-			paramsObj);
-	}
-
-	self.readDeviceType = function(address, callback) {
-		console.log("Read device type at service " + generalServiceUuid + ' and characteristic ' + deviceTypeUuid );
-		var paramsObj = {"address": address, "serviceUuid": generalServiceUuid, "characteristicUuid": deviceTypeUuid };
-		bluetoothle.read(function(obj) { // read success
-				if (obj.status == "read")
-				{
-					var deviceType = bluetoothle.encodedStringToBytes(obj.value);
-					var deviceTypeStr = bluetoothle.bytesToString(deviceType);
-					console.log("deviceType: " + deviceTypeStr);
-
-					callback(deviceTypeStr);
-				}
-				else
-				{
-					console.log("Unexpected read status: " + obj.status);
-					self.disconnectDevice(address);
-				}
-			}, 
-			function(obj) { // read error
-				console.log('Error in reading device type characteristic: ' + obj.error + " - " + obj.message);
-			},
-			paramsObj);
-	}
-
-	self.writeRoom = function(address, value) {
-		var u8 = bluetoothle.stringToBytes(value);
-		var v = bluetoothle.bytesToEncodedString(u8);
-		console.log("Write " + v + " at service " + generalServiceUuid + ' and characteristic ' + roomUuid );
-		var paramsObj = {"address": address, "serviceUuid": generalServiceUuid, "characteristicUuid": roomUuid , "value" : v};
-		bluetoothle.write(function(obj) { // write success
-				if (obj.status == 'written') {
-					console.log('Successfully written to room characteristic - ' + obj.status);
-				} else {
-					console.log('Writing to room characteristic was not successful' + obj);
-				}
-			},
-			function(obj) { // write error
-				console.log("Error in writing to room characteristic: " + obj.error + " - " + obj.message);
-			},
-			paramsObj);
-	}
-
-	self.readRoom = function(address, callback) {
-		console.log("Read room at service " + generalServiceUuid + ' and characteristic ' + roomUuid );
-		var paramsObj = {"address": address, "serviceUuid": generalServiceUuid, "characteristicUuid": roomUuid };
-		bluetoothle.read(function(obj) { // read success
-				if (obj.status == "read")
-				{
-					var room = bluetoothle.encodedStringToBytes(obj.value);
-					var roomStr = bluetoothle.bytesToString(room);
-					console.log("room: " + roomStr);
-
-					callback(roomStr);
-				}
-				else
-				{
-					console.log("Unexpected read status: " + obj.status);
-					self.disconnectDevice(address);
-				}
-			}, 
-			function(obj) { // read error
-				console.log('Error in reading room characteristic: ' + obj.error + " - " + obj.message);
-			},
-			paramsObj);
-	}
-
-	self.writeCurrentLimit = function(address, value) {
-		var u8 = new Uint8Array(1);
-		u8[0] = value & 0xFF;
-		// u8[1] = (value >> 8) & 0xFF;
-		var v = bluetoothle.bytesToEncodedString(u8);
-		console.log("Write " + v + " at service " + powerServiceUuid + ' and characteristic ' + currentLimitUuid );
-		var paramsObj = {"address": address, "serviceUuid": powerServiceUuid, "characteristicUuid": currentLimitUuid , "value" : v};
-		bluetoothle.write(function(obj) { // write success
-				if (obj.status == 'written') {
-					console.log('Successfully written to current limit characteristic - ' + obj.status);
-				} else {
-					console.log('Writing to current limit characteristic was not successful' + obj);
-				}
-			},
-			function(obj) { // write errror
-				console.log("Error in writing to current limit characteristic: " + obj.error + " - " + obj.message);
-			},
-			paramsObj);
-	}
-
-	self.readCurrentLimit = function(address, callback) {
-		console.log("Read current limit at service " + powerServiceUuid + ' and characteristic ' + currentLimitUuid );
-		var paramsObj = {"address": address, "serviceUuid": powerServiceUuid, "characteristicUuid": currentLimitUuid };
-		bluetoothle.read(function(obj) { // read success
-				if (obj.status == "read")
-				{
-					var currentLimit = bluetoothle.encodedStringToBytes(obj.value);
-					console.log("current limit: " + currentLimit[0]);
-
-					var value = currentLimit[0];
-
-					callback(value);
-				}
-				else
-				{
-					console.log("Unexpected read status: " + obj.status);
-					self.disconnectDevice(address);
-				}
-			}, 
-			function(obj) { // read error
-				console.log('Error in reading current limit characteristic: ' + obj.error + " - " + obj.message);
-			},
-			paramsObj);
-	}
-
-	self.getTrackedDevices = function(address, callback) {
-		console.log("Read device list at service " + indoorLocalizationServiceUuid + ' and characteristic ' + listTrackedDevicesUuid );
-		var paramsObj = {"address": address, "serviceUuid": indoorLocalizationServiceUuid, "characteristicUuid": listTrackedDevicesUuid };
-		bluetoothle.read(function(obj) { // read success
-				if (obj.status == "read")
-				{
-					var list = bluetoothle.encodedStringToBytes(obj.value);
-					console.log("list: " + list[0]);
-
-					callback(list);
-				}
-				else
-				{
-					console.log("Unexpected read status: " + obj.status);
-					self.disconnectDevice(address);
-				}
-			}, 
-			function(obj) { // read error
-				console.log('Error in reading tracked devices: ' + obj.error + " - " + obj.message);
-			},
-			paramsObj);
-	}
-
-	self.addTrackedDevice = function(address, bt_address, rssi) {
-		var u8 = new Uint8Array(7);
-		for (var i = 0; i < 6; i++) {
-			u8[i] = parseInt(bt_address[i], 16);
-			console.log("i: " + u8[i]);
-		}
-		u8[6] = rssi;
-		var v = bluetoothle.bytesToEncodedString(u8);
-		console.log("Write " + v + " at service " + indoorLocalizationServiceUuid + ' and characteristic ' + addTrackedDeviceUuid );
-		var paramsObj = {"address": address, "serviceUuid": indoorLocalizationServiceUuid, "characteristicUuid": addTrackedDeviceUuid , "value" : v};
-		bluetoothle.write(function(obj) { // write success
-				if (obj.status == 'written') {
-					console.log('Successfully written to add tracked device characteristic - ' + obj.status);
-				} else {
-					console.log('Writing to add tracked device characteristic was not successful' + obj);
-				}
-			},
-			function(obj) { // write error
-				console.log("Error in writing to add tracked device characteristic: " + obj.error + " - " + obj.message);
-			},
-			paramsObj);
-	}
-
-    self.readWifi = function(address) {
-        console.log("Read Wifi info at service " + generalServiceUuid + ' and characteristic ' + temperatureCharacteristicUuid);
-        var paramsObj = {"address": address, "serviceUuid": generalServiceUuid, "characteristicUuid": temperatureCharacteristicUuid};
-        bluetoothle.read(function(obj) { // read success
-                if (obj.status == "read")
-                {
-                    var wifiNetwork = bluetoothle.encodedStringToBytes(obj.value);
-                    console.log("Wifi SSID: " + wifiNetwork.ssid);
-                    console.log("Wifi password: " + wifiNetwork.key);
-                    return wifiNetwork;
-                }
-                else
-                {
-                    console.log("Unexpected read status: " + obj.status);
-                    self.disconnectDevice(address);
-                }
-            },
-            function(obj) { // read error
-                console.log('Error in reading wifi infos: ' + obj.error + " - " + obj.message);
-            },
-            paramsObj);
-    }
 
 }
 

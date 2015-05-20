@@ -40,9 +40,20 @@ var wifiHandler = function() {
                 })
             },
             function(){
-            console.log("FAILED TO ADD NETWORK");
-            callback(false);
+                console.log("FAILED TO ADD NETWORK");
+                callback(false);
             });
     }
 
+    self.getIP= function(callback){
+        networkinterface.getIPAddress(function(ip){
+            console.log("ip= "+ip);
+            if(typeof callback== "function"){
+                callback(ip);
+            }
+        },function(){
+            console.log("connecting to wifi...");
+            wifi.getIP(callback);
+        });
+    }
 };
