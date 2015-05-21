@@ -35,8 +35,9 @@ var connectingBLE;
 
 var connectedNetwork;
 var connectedDeviceBLE;
+var connectedDeviceAddress;
 
-var SSID= "RF_Almende";
+var SSID;
 var password;
 var keyType='WPA';
 
@@ -113,12 +114,24 @@ var hub = {
 				console.log("User clicks button to start searching for crownstones");
 
 				if (!searchingBLE) {
-					searchingBLE = true;
-					searchCrownstones();
+				    if(connectedBLE) {
+                        ble.disconnectDevice(connectedDeviceAddress,
+                            function(){
+                                searchingBLE = true;
+                                connectedBLE= false;
+ //                               searchCrownstones();
+                            },function(){
+                            console.log("error: couldn't disconnect");
+                            }
+                        );
+				    } else {
+				    searchingBLE = true;
+				    connectedBLE= false;
+				    searchCrownstones();
+				    }
 				} else {
 					searchingBLE = false;
 					stopSearch();
-					console.log("sort");
 				}
 			});
 		});
@@ -139,37 +152,55 @@ var hub = {
 				wanted_name = "";
 				for (var el in map) {
 
-					if (map[el]['name'].indexOf("crown") > -1) {
+					if (map[el]['name'].indexOf("wifi") > -1) {
+                        connectedDeviceAddress=el;
 						wanted_rssi = map[el]['rssi'];
 						wanted_name = map[el]['name'];
                         if (searchingBLE) {
                             searchingBLE = false;
                             stopSearch();
                         }
-                        var timeout = 5;
-                        connect(el, timeout,
+                        var timeout = 10;
+                        connectAndDiscover(
+                            connectedDeviceAddress,
+                            generalServiceUuid,
+                            getConfigurationCharacteristicUuid,
                             function(){
-                                readWifi(el,
-                                    function(){
-                                    console.log("got wifi infos");
-                                    },
-                                    function(){
-                                    console.log("error: couldn't get wifi infos");
-                                });
-                                connectWifi(SSID,password,keyType,
-                                    function(){
-                                        wifi.getIP(function(ip){
-                                            IP= ip;
-                                            console.log("IP found= " + IP);
-                                            writeIP(el,function(){
-                                                    console.log("wrote IP");
-                                                },function(){
-                                                    console.log("failed to write IP");
+                                connectedBLE=true;
+                                readWifi(
+                                    connectedDeviceAddress,
+                                    function(){ //successCB readWifi
+//                                        console.log("got wifi infos");
+                                        connectWifi(SSID,password,keyType,
+                                            function(){ //successCB connectWifi
+                                                wifi.getIP(function(ip){ //successCB getIP
+                                                    IP= ip;
+//                                                    console.log("IP found= " + IP);
+                                                    writeIP(
+                                                        el,
+                                                        function(){ //successCB writeIP
+//                                                            console.log("wrote IP");
+                                                            ble.disconnectDevice(
+                                                                connectedDeviceAddress,
+                                                                function(){ //succesCB disconnect
+//                                                                    console.log("disconnected successfully");
+                                                                },function(){ //errorCB disconnect
+//                                                                    console.log("error: couldn't disconnect");
+                                                                }
+                                                            );
+                                                        },function(){ //errorCB writeIP
+//                                                            console.log("failed to write IP");
+                                                        }
+                                                    );
                                                 });
-                                        });
+                                            },
+                                            function(){ //errorCB connectWifi
+//                                                console.log("connectWifi failed");
+                                            }
+                                        );
                                     },
-                                    function(){
-                                        console.log("connectWifi failed");
+                                    function(){ //errorCB readWifi
+                                        console.log("error: couldn't get wifi infos");
                                     }
                                 );
                             },
@@ -225,18 +256,27 @@ var hub = {
             ble.selectConfiguration(
                 address,
                 configWifiUuid,
-                ble.getConfiguration(
+                ble.getConfiguration( //selectconfig successCB
                     address,
-                    function(configuration){
-                        SSID=bluetoothle.bytesToString(configuration.payload.SSID);
-                        password=bluetoothle.bytesToString(configuration.payload.key);
+                    function(configuration){ //get config successCB
+                        var string;
+                        string=bluetoothle.bytesToString(configuration.payload);
+                        console.log("string= "+string);
+                        SSID=string.ssid;
+                        password=string.key;
                         successCB();
                     },
-                    errorCB
+                    function(){
+                        errorCB();
+                        console.log("error: couldn't get the configuration");
+                    }
                 ),
-                errorCB
-            );
-		}
+                function(){
+                    errorCB();
+                    console.log("error: couldn't select the configuration");
+                }
+            )
+        }
 
 		writeIP=function(address, successCB, errorCB){
             var configuration= {};
@@ -265,6 +305,38 @@ var hub = {
 						'Try again!');
 			}
 		}
+
+        connectAndDiscover = function(address, serviceUuid, characteristicUuid, successCB, errorCB) {
+            var timeout = 10; // 10 seconds here
+            /*
+                var connected = ble.isConnected(address);
+                if (connected) {
+                console.log("Device is already connected");
+                } else {
+                console.log("Device is not yet connected");
+                }*/
+            console.log("Connect to service " + serviceUuid + " and characteristic " + characteristicUuid);
+            connect(
+                    address,
+                    timeout,
+                    function connectionSuccess() {
+                        ble.discoverCharacteristic(
+                                address,
+                                serviceUuid,
+                                characteristicUuid,
+                                successCB,
+                                function discoveryFailure(msg) {
+                                    console.log(msg);
+                                    disconnect();
+                                    errorCB(msg);
+                                }
+                                )
+                    },
+                    function connectionFailure(msg) {
+                        errorCB(msg);
+                    }
+                    );
+        }
 	}
 }
 

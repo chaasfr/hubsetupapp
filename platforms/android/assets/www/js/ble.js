@@ -509,6 +509,11 @@ var BLEHandler = function() {
 						configuration.payload[i] = bytearray[i+2];
 					}
 					successCB(configuration);
+                    console.log(" configuration= "+configuration +
+                     " configuration.payload= "+ configuration.payload +
+                     " configuration.payload[0]= "+ configuration.payload[0] +
+                     " configuration.type= "+ configuration.type +
+                     " configuration.size= "+ configuration.size);
 				}
 				else
 				{
@@ -572,10 +577,6 @@ var BLEHandler = function() {
 	/** Before getting the value of a specific configuration type, we have to select it.
 	 */
 	self.selectConfiguration = function(address, configurationType, successCB, errorCB) {
-		if (configurationType != configFloorUuid) {
-			var msg = "Not yet support configuration option";
-			if (errorCB) errorCB(msg);
-		}
 
 		var u8 = new Uint8Array(1);
 		u8[0] = configurationType;
