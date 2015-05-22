@@ -23,6 +23,23 @@ var DEBUG = true; // enable debug, some UI elements are only shown if DEBUG is s
 
 
 var wifi;
+var ble;
+
+var searchingWifi;
+var connectingWifi;
+var IP;
+
+var searchingBLE;
+var connectedBLE;
+var connectingBLE;
+
+var connectedNetwork;
+var connectedDeviceBLE;
+var connectedDeviceAddress;
+
+var SSID;
+var password;
+var keyType='WPA';
 
 var hub = {
 
@@ -32,14 +49,21 @@ var hub = {
 	// map of wifi network
 	networks: {},
 
+    // map of crownstones
+    crownstones: {},
+
 
 	/* Start should be called if all plugins are ready and all functionality can be called.
 	 */
 	start:function() {
 		// set up wifi connection
-		wifi.init(function(enabled) {
-			$('#wifiScanBtn').prop("disabled", false);
+		wifi.init(function(enabledWifi) {
+			$('#wifiScanBtn').prop("disabled", !enabledWifi);
 		});
+		ble.init(function(enabled) {
+            $('#findCrownstones').prop("disabled", !enabled);
+            searchCrownstones();
+        });
 	},
 
 	create:function() {
@@ -50,28 +74,230 @@ var hub = {
 		console.log("---------------------------------------------------------");
 		console.log("Start Hub application");
 
-		wifi = new WifiWizard();
-
-		var repeatFunctionHandle = null;
+		wifi = new wifiHandler();
+        ble= new BLEHandler();
 
 		// if debug is disabled, hide everything with class debug
 		if (!DEBUG) {
 			$(".debug").hide();
 		}
 
-		var searching = false;
-		var connected = false;
-		var connecting = false;
+		searchingWifi = false;
+		connectedWifi = false;
+		connectingWifi = false;
 
-		var connectedNetwork = "";
+        searchingBLE = true;
+        connectedBLE = false;
+        connectingBLE = false;
 
+		connectedNetwork = "";
+        connectedDeviceBLE = "";
 
-		/*******************************************************************************************************
-		 * Selection page
-		 ******************************************************************************************************/
+		$("#selectionPage").on("pagecreate", function(event) {
+			// get partner information
+			console.log("Get partner information");
+			$.getJSON('data/partners.js', function(partners) {
+				console.log("Update data structure with partner information");
+
+				for (var c = 0; c < partners.length; c++) {
+					var partner = partners[c];
+					self.partnersById[partner.id] = partner;
+				}
+			}).error(function() {
+				console.log("Did you make an error in the data/partners.js file?");
+			}).success(function() {
+				console.log("Retrieved data structure successfully");
+			});
+
+			console.log("Add event handler to on-click event for a listed crownstone");
+			$('#findCrownstones').on('click', function(event) {
+				console.log("User clicks button to start searching for crownstones");
+
+				if (!searchingBLE) {
+				    if(connectedBLE) {
+                        ble.disconnectDevice(connectedDeviceAddress,
+                            function(){
+                                searchingBLE = true;
+                                connectedBLE= false;
+ //                               searchCrownstones();
+                            },function(){
+                            console.log("error: couldn't disconnect");
+                            }
+                        );
+				    } else {
+				    searchingBLE = true;
+				    connectedBLE= false;
+				    searchCrownstones();
+				    }
+				} else {
+					searchingBLE = false;
+					stopSearch();
+				}
+			});
+		});
+
+		searchCrownstones = function() {
+			$('#wantedCrownstone').html("Wanted Crownstone: ");
+			var map = {};
+
+			findCrownstones(function(obj) {
+
+				if (!map.hasOwnProperty(obj.address)) {
+					map[obj.address] = {'name': obj.name, 'rssi': obj.rssi};
+				} else {
+					map[obj.address]['rssi'] = obj.rssi;
+				}
+
+				wanted_rssi = -128;
+				wanted_name = "";
+				for (var el in map) {
+
+					if (map[el]['name'].indexOf("wifi") > -1) {
+                        connectedDeviceAddress=el;
+						wanted_rssi = map[el]['rssi'];
+						wanted_name = map[el]['name'];
+                        if (searchingBLE) {
+                            searchingBLE = false;
+                            stopSearch();
+                        }
+                        var timeout = 10;
+                        connectAndDiscover(
+                            connectedDeviceAddress,
+                            generalServiceUuid,
+                            getConfigurationCharacteristicUuid,
+                            function(){
+                                connectedBLE=true;
+                                readWifi(
+                                    connectedDeviceAddress,
+                                    function(){ //successCB readWifi
+//                                        console.log("got wifi infos");
+                                        connectWifi(SSID,password,keyType,
+                                            function(){ //successCB connectWifi
+                                                wifi.getIP(function(ip){ //successCB getIP
+                                                    IP= ip;
+//                                                    console.log("IP found= " + IP);
+                                                    writeIP(
+                                                        el,
+                                                        function(){ //successCB writeIP
+//                                                            console.log("wrote IP");
+                                                            ble.disconnectDevice(
+                                                                connectedDeviceAddress,
+                                                                function(){ //succesCB disconnect
+//                                                                    console.log("disconnected successfully");
+                                                                },function(){ //errorCB disconnect
+//                                                                    console.log("error: couldn't disconnect");
+                                                                }
+                                                            );
+                                                        },function(){ //errorCB writeIP
+//                                                            console.log("failed to write IP");
+                                                        }
+                                                    );
+                                                });
+                                            },
+                                            function(){ //errorCB connectWifi
+//                                                console.log("connectWifi failed");
+                                            }
+                                        );
+                                    },
+                                    function(){ //errorCB readWifi
+                                        console.log("error: couldn't get wifi infos");
+                                    }
+                                );
+                            },
+                            connectionFailed);
+					}
+				}
+
+				$('#wantedCrownstone').html("Wanted Crownstone: <b>" + wanted_name + "</b>");
+
+			});
+		}
+
+		findCrownstones = function(callback) {
+			console.log("Find crownstones");
+			ble.startEndlessScan(callback);
+		}
+
+		stopSearch = function() {
+			$('#findCrownstones').html("Restart");
+			console.log("stop search");
+			ble.stopEndlessScan();
+		}
+
+		connect = function(address, timeout, successCB, errorCB) {
+			if (!(connectedBLE || connectingBLE)) {
+				connectingBLE = true;
+				console.log("connecting to " + address);
+				//
+				ble.connectDevice(address, timeout, function(success) {
+					connectingBLE = false;
+					if (success) {
+						connectedBLE = true
+						connectedDeviceBLE = address;
+						successCB();
+					} else {
+						var msg = "Connection failure";
+						errorCB(msg);
+					}
+				});
+			}
+		}
+
+		connectWifi= function(SSID, password, keyType, successCB, errorCB){
+            wifi.connectNetwork(SSID, password, keyType, function(connectedWifi) {
+                   if(connectedWifi){
+                       successCB();
+                   }
+                   else errorCB();
+            });
+		}
+
+		readWifi= function(address,successCB, errorCB){
+            ble.selectConfiguration(
+                address,
+                configWifiUuid,
+                setTimeout(function() {
+//                    connectAndDiscover(
+//                        address,
+//                        generalServiceUuid,
+//                        getConfigurationCharacteristicUuid,
+                        ble.getConfiguration( //selectconfig successCB
+                            address,
+                            function(configuration){ //get config successCB
+                                var string;
+                                string=bluetoothle.bytesToString(configuration.payload);
+                                console.log("string= "+string);
+                                SSID=string.ssid;
+                                password=string.key;
+                                successCB();
+                            },
+                            function(){
+                                errorCB();
+                                console.log("error: couldn't get the configuration");
+                            }
+//                        ),
+//                        function(msg){
+//                            console.log(msg);
+//                        }
+                    );
+                }, 1000),
+                function(){
+                    errorCB();
+                    console.log("error: couldn't select the configuration");
+                }
+            )
+        }
+
+		writeIP=function(address, successCB, errorCB){
+            var configuration= {};
+            configuration.type=configWifiUuid;
+            configuration.length=4;
+            configuration.payload= IP.split('.');
+            ble.writeConfiguration(address,configuration,successCB,errorCB);
+		}
 
 		connectionFailed = function() {
-			if (!connected) {
+			if (!connectedBLE) {
 				navigator.notification.alert(
 						'Could not connect to network',
 						null,
@@ -90,24 +316,37 @@ var hub = {
 			}
 		}
 
-		disconnect = function() {
-			if (!connectedNetwork) {
-				console.log("not connected to a network currently!!");
-				return;
-			}
-
-			if (connected) {
-				connected = false;
-				console.log("disconnecting...");
-				wifi.disconnectNetwork(connectedNetwork,
-				    console.log("disconnected"),
-				    console.log("can't disconnect");
-				);
-				connectedNetwork = null;
-			}
-		}
-
-		start();
+        connectAndDiscover = function(address, serviceUuid, characteristicUuid, successCB, errorCB) {
+            var timeout = 10; // 10 seconds here
+            /*
+                var connected = ble.isConnected(address);
+                if (connected) {
+                console.log("Device is already connected");
+                } else {
+                console.log("Device is not yet connected");
+                }*/
+            console.log("Connect to service " + serviceUuid + " and characteristic " + characteristicUuid);
+            connect(
+                    address,
+                    timeout,
+                    function connectionSuccess() {
+                        ble.discoverCharacteristic(
+                                address,
+                                serviceUuid,
+                                characteristicUuid,
+                                successCB,
+                                function discoveryFailure(msg) {
+                                    console.log(msg);
+                                    disconnect();
+                                    errorCB(msg);
+                                }
+                                )
+                    },
+                    function connectionFailure(msg) {
+                        errorCB(msg);
+                    }
+                    );
+        }
 	}
 }
 

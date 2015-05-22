@@ -256,21 +256,31 @@ var hub = {
             ble.selectConfiguration(
                 address,
                 configWifiUuid,
-                ble.getConfiguration( //selectconfig successCB
-                    address,
-                    function(configuration){ //get config successCB
-                        var string;
-                        string=bluetoothle.bytesToString(configuration.payload);
-                        console.log("string= "+string);
-                        SSID=string.ssid;
-                        password=string.key;
-                        successCB();
-                    },
-                    function(){
-                        errorCB();
-                        console.log("error: couldn't get the configuration");
-                    }
-                ),
+                setTimeout(function() {
+//                    connectAndDiscover(
+//                        address,
+//                        generalServiceUuid,
+//                        getConfigurationCharacteristicUuid,
+                        ble.getConfiguration( //selectconfig successCB
+                            address,
+                            function(configuration){ //get config successCB
+                                var string;
+                                string=bluetoothle.bytesToString(configuration.payload);
+                                console.log("string= "+string);
+                                SSID=string.ssid;
+                                password=string.key;
+                                successCB();
+                            },
+                            function(){
+                                errorCB();
+                                console.log("error: couldn't get the configuration");
+                            }
+//                        ),
+//                        function(msg){
+//                            console.log(msg);
+//                        }
+                    );
+                }, 1000),
                 function(){
                     errorCB();
                     console.log("error: couldn't select the configuration");

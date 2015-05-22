@@ -49,6 +49,20 @@ module.exports = [
         "clobbers": [
             "Connection"
         ]
+    },
+    {
+        "file": "plugins/com.pylonproducts.wifiwizard/www/WifiWizard.js",
+        "id": "com.pylonproducts.wifiwizard.DynamicUpdate",
+        "clobbers": [
+            "WifiWizard"
+        ]
+    },
+    {
+        "file": "plugins/com.albahra.plugin.networkinterface/www/networkinterface.js",
+        "id": "com.albahra.plugin.networkinterface.networkinterface",
+        "clobbers": [
+            "window.networkinterface"
+        ]
     }
 ];
 module.exports.metadata = 
@@ -58,7 +72,10 @@ module.exports.metadata =
     "com.verso.cordova.clipboard": "0.1.0",
     "org.apache.cordova.device": "0.3.0",
     "org.apache.cordova.dialogs": "0.3.0",
-    "org.apache.cordova.network-information": "0.2.15"
+    "org.apache.cordova.network-information": "0.2.15",
+    "com.pylonproducts.wifiwizard": "0.2.8",
+    "com.tsubik.cordova.start_on_boot": "1.0.2",
+    "com.albahra.plugin.networkinterface": "1.0.7"
 }
 // BOTTOM OF METADATA
 });

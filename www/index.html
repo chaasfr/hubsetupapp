@@ -50,15 +50,17 @@
 			<div class="scrollable" role="main">
 				<div>	
 					<img class="scaledLogo" src="img/logos/DoBots.png"></img>
-                    <button id="wifiScanBtn" class="ui-btn-active ui-state-persist" data-role="button" disabled>Scan for Wifi</button>
 				</div>
+                <div>
+                    <button id="findCrownstones" class="ui-btn-active ui-state-persist" data-role="button" disabled>Restart</button>
+                    <p/>
+                    <div id="wantedCrownstone">Wanted Crownstone:</div>
+                </div>
 			</div>
 		</div>
 
-
-
-
 		<script type="text/javascript" src="js/wifi.js"></script>
+        <script type="text/javascript" src="js/ble.js"></script>
 		<script type="text/javascript" src="js/hub.js"></script>
 		<script type="text/javascript" src="js/index.js"></script>
 		<script type="text/javascript">
