@@ -34,22 +34,24 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="index.html" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="index.html" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/assets/www/index.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="470" max-vertical-offset="1140">
-              <caret line="59" column="14" selection-start-line="59" selection-start-column="14" selection-end-line="59" selection-end-column="14" />
+            <state vertical-scroll-proportion="0.48802948" vertical-offset="470" max-vertical-offset="1140">
+              <caret line="49" column="48" selection-start-line="49" selection-start-column="48" selection-end-line="49" selection-end-column="48" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ble.js" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="ble.js" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/assets/www/js/ble.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.44604316" vertical-offset="8467" max-vertical-offset="9210">
-              <caret line="581" column="79" selection-start-line="581" selection-start-column="79" selection-end-line="581" selection-end-column="79" />
-              <folding />
+            <state vertical-scroll-proportion="0.0" vertical-offset="7711" max-vertical-offset="8640">
+              <caret line="571" column="5" selection-start-line="571" selection-start-column="5" selection-end-line="571" selection-end-column="5" />
+              <folding>
+                <element signature="e#0#20581#0" expanded="false" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -57,9 +59,12 @@
       <file leaf-file-name="hub.js" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/assets/www/js/hub.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="3775" max-vertical-offset="5370">
-              <caret line="258" column="16" selection-start-line="258" selection-start-column="16" selection-end-line="258" selection-end-column="16" />
-              <folding />
+            <state vertical-scroll-proportion="-17.222221" vertical-offset="3930" max-vertical-offset="4560">
+              <caret line="311" column="25" selection-start-line="311" selection-start-column="25" selection-end-line="311" selection-end-column="25" />
+              <folding>
+                <element signature="e#0#11146#0" expanded="false" />
+                <element signature="e#0#11146#0" expanded="false" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -77,8 +82,8 @@
       <file leaf-file-name="BluetoothLePlugin.java" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/com/randdusing/bluetoothle/BluetoothLePlugin.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="19920" max-vertical-offset="47190">
-              <caret line="1328" column="53" selection-start-line="1328" selection-start-column="41" selection-end-line="1328" selection-end-column="53" />
+            <state vertical-scroll-proportion="0.0" vertical-offset="19395" max-vertical-offset="46485">
+              <caret line="1337" column="5" selection-start-line="1337" selection-start-column="5" selection-end-line="1337" selection-end-column="5" />
               <folding />
             </state>
           </provider>
@@ -87,7 +92,7 @@
       <file leaf-file-name="wifi.js" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/assets/www/js/wifi.js">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="445" max-vertical-offset="960">
+            <state vertical-scroll-proportion="0.0" vertical-offset="393" max-vertical-offset="960">
               <caret line="55" column="12" selection-start-line="55" selection-start-column="12" selection-end-line="55" selection-end-column="12" />
               <folding />
             </state>
@@ -1281,7 +1286,6 @@
     </navigator>
     <panes>
       <pane id="ProjectPane" />
-      <pane id="PackagesPane" />
       <pane id="Scope" />
       <pane id="AndroidView">
         <subPane>
@@ -1342,36 +1346,6 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="plugins" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-          </PATH>
-          <PATH>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="android" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidViewProjectNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="android" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidModuleNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="assets" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidSourceTypeNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="www" />
-              <option name="myItemType" value="com.android.tools.idea.navigator.nodes.AndroidPsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="plugins" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="com.randdusing.bluetoothle" />
-              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
-            </PATH_ELEMENT>
-            <PATH_ELEMENT>
-              <option name="myItemId" value="www" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -1509,6 +1483,7 @@
           </PATH>
         </subPane>
       </pane>
+      <pane id="PackagesPane" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -1690,7 +1665,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="65" y="24" width="1855" height="1056" extended-state="6" />
+    <frame x="65" y="24" width="1855" height="1056" extended-state="7" />
     <editor active="true" />
     <layout>
       <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -1704,7 +1679,7 @@
       <window_info id="Gradle Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Build Variants" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Android" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.38044634" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Android" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.36875665" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Gradle" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -1742,13 +1717,6 @@
     <breakpoint-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/assets/www/plugins/org.apache.cordova.network-information/www/network.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="315" max-vertical-offset="1455">
-          <caret line="71" column="9" selection-start-line="71" selection-start-column="9" selection-end-line="71" selection-end-column="9" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/assets/www/js/index.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="296" max-vertical-offset="900">
@@ -1768,7 +1736,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="438" max-vertical-offset="15330">
           <caret line="258" column="49" selection-start-line="258" selection-start-column="45" selection-end-line="258" selection-end-column="49" />
-          <folding />
+          <folding>
+            <element signature="e#0#20581#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1776,7 +1746,10 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="3206" max-vertical-offset="3810">
           <caret line="172" column="0" selection-start-line="172" selection-start-column="0" selection-end-line="172" selection-end-column="0" />
-          <folding />
+          <folding>
+            <element signature="e#0#11146#0" expanded="false" />
+            <element signature="e#0#11146#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1821,7 +1794,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="3678" max-vertical-offset="15330">
           <caret line="258" column="49" selection-start-line="258" selection-start-column="45" selection-end-line="258" selection-end-column="49" />
-          <folding />
+          <folding>
+            <element signature="e#0#20581#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1829,7 +1804,10 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="840" max-vertical-offset="3960">
           <caret line="56" column="22" selection-start-line="56" selection-start-column="22" selection-end-line="56" selection-end-column="22" />
-          <folding />
+          <folding>
+            <element signature="e#0#11146#0" expanded="false" />
+            <element signature="e#0#11146#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1874,7 +1852,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="15000" max-vertical-offset="15330">
           <caret line="1000" column="39" selection-start-line="1000" selection-start-column="39" selection-end-line="1000" selection-end-column="39" />
-          <folding />
+          <folding>
+            <element signature="e#0#20581#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1882,7 +1862,10 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="3225" max-vertical-offset="4365">
           <caret line="215" column="21" selection-start-line="215" selection-start-column="21" selection-end-line="215" selection-end-column="21" />
-          <folding />
+          <folding>
+            <element signature="e#0#11146#0" expanded="false" />
+            <element signature="e#0#11146#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1927,7 +1910,10 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="2880" max-vertical-offset="3765">
           <caret line="192" column="53" selection-start-line="192" selection-start-column="53" selection-end-line="192" selection-end-column="53" />
-          <folding />
+          <folding>
+            <element signature="e#0#11146#0" expanded="false" />
+            <element signature="e#0#11146#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1935,7 +1921,9 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="1170" max-vertical-offset="14985">
           <caret line="78" column="0" selection-start-line="78" selection-start-column="0" selection-end-line="78" selection-end-column="0" />
-          <folding />
+          <folding>
+            <element signature="e#0#20581#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -1965,7 +1953,10 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1785">
           <caret line="30" column="0" selection-start-line="30" selection-start-column="0" selection-end-line="30" selection-end-column="0" />
-          <folding />
+          <folding>
+            <element signature="e#0#11146#0" expanded="false" />
+            <element signature="e#0#11146#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
@@ -2064,26 +2055,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/assets/www/index.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="470" max-vertical-offset="1140">
-          <caret line="59" column="14" selection-start-line="59" selection-start-column="14" selection-end-line="59" selection-end-column="14" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/assets/www/js/index.js">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="1.0121704" vertical-offset="206" max-vertical-offset="900">
           <caret line="47" column="17" selection-start-line="47" selection-start-column="12" selection-end-line="47" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/assets/www/js/wifi.js">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="356" max-vertical-offset="960">
-          <caret line="55" column="12" selection-start-line="55" selection-start-column="12" selection-end-line="55" selection-end-column="12" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -2104,24 +2079,53 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/com/randdusing/bluetoothle/BluetoothLePlugin.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="19920" max-vertical-offset="47190">
-          <caret line="1328" column="53" selection-start-line="1328" selection-start-column="41" selection-end-line="1328" selection-end-column="53" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="19395" max-vertical-offset="46485">
+          <caret line="1337" column="5" selection-start-line="1337" selection-start-column="5" selection-end-line="1337" selection-end-column="5" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/assets/www/js/hub.js">
+    <entry file="file://$PROJECT_DIR$/assets/www/cordova.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="3775" max-vertical-offset="5370">
-          <caret line="258" column="16" selection-start-line="258" selection-start-column="16" selection-end-line="258" selection-end-column="16" />
+        <state vertical-scroll-proportion="0.4250441" vertical-offset="4289" max-vertical-offset="29730">
+          <caret line="302" column="13" selection-start-line="302" selection-start-column="13" selection-end-line="302" selection-end-column="13" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/assets/www/js/wifi.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="356" max-vertical-offset="960">
+          <caret line="55" column="12" selection-start-line="55" selection-start-column="12" selection-end-line="55" selection-end-column="12" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/assets/www/js/ble.js">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.44604316" vertical-offset="8467" max-vertical-offset="9210">
-          <caret line="581" column="79" selection-start-line="581" selection-start-column="79" selection-end-line="581" selection-end-column="79" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="7711" max-vertical-offset="8640">
+          <caret line="571" column="5" selection-start-line="571" selection-start-column="5" selection-end-line="571" selection-end-column="5" />
+          <folding>
+            <element signature="e#0#20581#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/assets/www/js/hub.js">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-17.222221" vertical-offset="3930" max-vertical-offset="4560">
+          <caret line="311" column="25" selection-start-line="311" selection-start-column="25" selection-end-line="311" selection-end-column="25" />
+          <folding>
+            <element signature="e#0#11146#0" expanded="false" />
+            <element signature="e#0#11146#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/assets/www/index.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.48802948" vertical-offset="470" max-vertical-offset="1140">
+          <caret line="49" column="48" selection-start-line="49" selection-start-column="48" selection-end-line="49" selection-end-column="48" />
           <folding />
         </state>
       </provider>

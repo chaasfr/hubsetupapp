@@ -117,7 +117,6 @@ var hub = {
 				    if(connectedBLE) {
                         ble.disconnectDevice(connectedDeviceAddress,
                             function(){
-                                searchingBLE = true;
                                 connectedBLE= false;
  //                               searchCrownstones();
                             },function(){
@@ -164,41 +163,11 @@ var hub = {
                         connectAndDiscover(
                             connectedDeviceAddress,
                             generalServiceUuid,
-                            getConfigurationCharacteristicUuid,
+                            selectConfigurationCharacteristicUuid,
                             function(){
                                 connectedBLE=true;
-                                readWifi(
+                                selectWifi(
                                     connectedDeviceAddress,
-                                    function(){ //successCB readWifi
-//                                        console.log("got wifi infos");
-                                        connectWifi(SSID,password,keyType,
-                                            function(){ //successCB connectWifi
-                                                wifi.getIP(function(ip){ //successCB getIP
-                                                    IP= ip;
-//                                                    console.log("IP found= " + IP);
-                                                    writeIP(
-                                                        el,
-                                                        function(){ //successCB writeIP
-//                                                            console.log("wrote IP");
-                                                            ble.disconnectDevice(
-                                                                connectedDeviceAddress,
-                                                                function(){ //succesCB disconnect
-//                                                                    console.log("disconnected successfully");
-                                                                },function(){ //errorCB disconnect
-//                                                                    console.log("error: couldn't disconnect");
-                                                                }
-                                                            );
-                                                        },function(){ //errorCB writeIP
-//                                                            console.log("failed to write IP");
-                                                        }
-                                                    );
-                                                });
-                                            },
-                                            function(){ //errorCB connectWifi
-//                                                console.log("connectWifi failed");
-                                            }
-                                        );
-                                    },
                                     function(){ //errorCB readWifi
                                         console.log("error: couldn't get wifi infos");
                                     }
@@ -252,35 +221,11 @@ var hub = {
             });
 		}
 
-		readWifi= function(address,successCB, errorCB){
+		selectWifi= function(address, errorCB){
             ble.selectConfiguration(
                 address,
                 configWifiUuid,
-                setTimeout(function() {
-//                    connectAndDiscover(
-//                        address,
-//                        generalServiceUuid,
-//                        getConfigurationCharacteristicUuid,
-                        ble.getConfiguration( //selectconfig successCB
-                            address,
-                            function(configuration){ //get config successCB
-                                var string;
-                                string=bluetoothle.bytesToString(configuration.payload);
-                                console.log("string= "+string);
-                                SSID=string.ssid;
-                                password=string.key;
-                                successCB();
-                            },
-                            function(){
-                                errorCB();
-                                console.log("error: couldn't get the configuration");
-                            }
-//                        ),
-//                        function(msg){
-//                            console.log(msg);
-//                        }
-                    );
-                }, 1000),
+                readWifi,
                 function(){
                     errorCB();
                     console.log("error: couldn't select the configuration");
@@ -288,11 +233,59 @@ var hub = {
             )
         }
 
+        readWifi= function(){
+            ble.getConfiguration( //selectconfig successCB
+                connectedDeviceAddress,
+                function(configuration){ //get config successCB
+                    var string;
+                    string=bluetoothle.bytesToString(configuration.payload);
+                    var json = JSON.parse(string);
+                    console.log("json= "+json);
+                    SSID=json.ssid;
+                    password=json.key;
+                    console.log("SSID= " + SSID + " password= " + password + "typeof(string)= " + typeof(string));
+                    connectWifi(SSID,password,keyType,
+                        function(){ //successCB connectWifi
+                            wifi.getIP(function(ip){ //successCB getIP
+                                IP= ip;
+                                writeIP(
+                                    connectedDeviceAddress,
+                                    function(){ //successCB writeIP
+//                                        ble.disconnectDevice(
+//                                            connectedDeviceAddress,
+//                                            function(){ //succesCB disconnect
+////                                                                    console.log("disconnected successfully");
+//                                            },function(){ //errorCB disconnect
+////                                                                    console.log("error: couldn't disconnect");
+//                                            }
+//                                        );
+                                    console.log("succesCB writeIP");
+                                    },function(){ //errorCB writeIP
+//                                                            console.log("failed to write IP");
+                                    }
+                                );
+                            });
+                        },
+                        function(){ //errorCB connectWifi
+//                                                console.log("connectWifi failed");
+                        }
+                    );
+                },
+                function(){
+//                    errorCB();
+                    console.log("error: couldn't get the configuration");
+                }
+            );
+        }
+
 		writeIP=function(address, successCB, errorCB){
+            var u8 = new Uint8Array(IP.length);
+            u8 = bluetoothle.stringToBytes(IP);
             var configuration= {};
             configuration.type=configWifiUuid;
-            configuration.length=4;
-            configuration.payload= IP.split('.');
+            configuration.length=IP.length;
+            configuration.payload= u8;
+            console.log("payload= " + configuration.payload + " payload[1]= " + configuration.payload[1] + " typeof(payload)= " + typeof(configuration.payload));
             ble.writeConfiguration(address,configuration,successCB,errorCB);
 		}
 
@@ -347,6 +340,7 @@ var hub = {
                     }
                     );
         }
+
 	}
 }
 

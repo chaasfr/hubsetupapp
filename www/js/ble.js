@@ -503,13 +503,12 @@ var BLEHandler = function() {
 					var str = bluetoothle.bytesToString(bytearray);
 					var configuration = {};
 					configuration.type = bytearray[0];
-					configuration.length = bytearray[1];
-					configuration.payload = new ArrayBuffer(configuration.length);
+					configuration.length = bytearray[2];
+					configuration.payload = new Uint8Array(configuration.length);
 					for (var i = 0; i < configuration.length; i++) {
-						configuration.payload[i] = bytearray[i+2];
+						configuration.payload[i] = bytearray[i+4];
 					}
 					successCB(configuration);
-					console.log("configuration.type= "+ configuration.type);
 				}
 				else
 				{
@@ -535,12 +534,15 @@ var BLEHandler = function() {
 		console.log("Write to " + address + " configuration type " + configuration.type);
 
 		// build up a single byte array, prepending payload with type and payload length, preamble size is 4
-		var u8 = new Uint8Array(configuration.length+4);
+		var u8 = new Uint8Array(configuration.length+4);;
 		u8[0] = configuration.type;
 		u8[1] = RESERVED;
-		u8[2] = (configuration.length & 0x0F); // endianness: least significant byte first
+		u8[2] = (configuration.length & 0x00FF); // endianness: least significant byte first
 		u8[3] = (configuration.length >> 8);
-		u8.set(configuration.payload, 4);
+		for (var i = 0; i < configuration.length; i++) {
+			u8[i+4] = configuration.payload[i];
+		}
+
 
 		var v = bluetoothle.bytesToEncodedString(u8);
 		console.log("Write " + v + " at service " + generalServiceUuid +
@@ -580,7 +582,7 @@ var BLEHandler = function() {
 		console.log("Write " + v + " at service " + generalServiceUuid +
 				' and characteristic ' + selectConfigurationCharacteristicUuid );
 		var paramsObj = {"address": address, "serviceUuid": generalServiceUuid,
-			"characteristicUuid": selectConfigurationCharacteristicUuid , "value" : u8[0]};
+			"characteristicUuid": selectConfigurationCharacteristicUuid , "value" : v};
 		bluetoothle.write(
 			function(obj) { // write success
 				if (obj.status == 'written') {
@@ -596,7 +598,7 @@ var BLEHandler = function() {
 				}
 			},
 			function(obj) { // write error
-				var msg = 'Error in writing to "select configuration" characteristic - ' +
+				var msg = 'Error CB in writing to "select configuration" characteristic - ' +
 					obj.error + " - " + obj.message;
 				console.log(msg);
 				if (errorCB) errorCB(msg);
