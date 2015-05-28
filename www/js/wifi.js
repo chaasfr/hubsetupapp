@@ -52,7 +52,6 @@ var wifiHandler = function() {
                 callback(ip);
             }
         },function(){
-            console.log("connecting to wifi...");
             wifi.getIP(callback);
         });
     }

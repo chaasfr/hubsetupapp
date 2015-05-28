@@ -27,6 +27,7 @@ var ble;
 
 var searchingWifi;
 var connectingWifi;
+var connectedWifi;
 var IP;
 
 var searchingBLE;
@@ -129,7 +130,6 @@ var hub = {
 				    searchCrownstones();
 				    }
 				} else {
-					searchingBLE = false;
 					stopSearch();
 				}
 			});
@@ -156,7 +156,6 @@ var hub = {
 						wanted_rssi = map[el]['rssi'];
 						wanted_name = map[el]['name'];
                         if (searchingBLE) {
-                            searchingBLE = false;
                             stopSearch();
                         }
                         var timeout = 10;
@@ -170,6 +169,7 @@ var hub = {
                                     connectedDeviceAddress,
                                     function(){ //errorCB readWifi
                                         console.log("error: couldn't get wifi infos");
+                                        disconnect();
                                     }
                                 );
                             },
@@ -183,6 +183,10 @@ var hub = {
 		}
 
 		findCrownstones = function(callback) {
+		    if(searchingBLE){
+		        stopSearch();
+		    }
+		    searchingBLE=true;
 			console.log("Find crownstones");
 			ble.startEndlessScan(callback);
 		}
@@ -190,6 +194,7 @@ var hub = {
 		stopSearch = function() {
 			$('#findCrownstones').html("Restart");
 			console.log("stop search");
+			searchingBLE = false;
 			ble.stopEndlessScan();
 		}
 
@@ -240,42 +245,46 @@ var hub = {
                     var string;
                     string=bluetoothle.bytesToString(configuration.payload);
                     var json = JSON.parse(string);
-                    console.log("json= "+json);
                     SSID=json.ssid;
                     password=json.key;
-                    console.log("SSID= " + SSID + " password= " + password + "typeof(string)= " + typeof(string));
+                    if (password==""){
+                        password= null;
+                        keyType= null;
+                    }
+                    console.log("SSID= "+ SSID + " password= " + password);
                     connectWifi(SSID,password,keyType,
                         function(){ //successCB connectWifi
                             wifi.getIP(function(ip){ //successCB getIP
                                 IP= ip;
-                                writeIP(
-                                    connectedDeviceAddress,
-                                    function(){ //successCB writeIP
-//                                        ble.disconnectDevice(
-//                                            connectedDeviceAddress,
-//                                            function(){ //succesCB disconnect
-////                                                                    console.log("disconnected successfully");
-//                                            },function(){ //errorCB disconnect
-////                                                                    console.log("error: couldn't disconnect");
-//                                            }
-//                                        );
-                                    console.log("succesCB writeIP");
-                                    },function(){ //errorCB writeIP
-//                                                            console.log("failed to write IP");
-                                    }
-                                );
+                                setTimeout(func,1000);
                             });
                         },
                         function(){ //errorCB connectWifi
-//                                                console.log("connectWifi failed");
+                            console.log("connectWifi failed");
+                            disconnect();
                         }
                     );
                 },
                 function(){
-//                    errorCB();
                     console.log("error: couldn't get the configuration");
+                    disconnect();
                 }
             );
+
+            function func(){
+            writeIP(
+                connectedDeviceAddress,
+                function(){ //successCB writeIP
+                        console.log("successfully wrote the IP back");
+                        connectedWifi=true;
+                        setTimeout(disconnect, 1000);
+                    },
+                    function(){ //errorCB writeIP
+                        console.log("failed to write IP");
+                        disconnect();
+                    }
+                );
+            }
         }
 
 		writeIP=function(address, successCB, errorCB){
@@ -339,6 +348,25 @@ var hub = {
                         errorCB(msg);
                     }
                     );
+        }
+
+        disconnect = function() {
+            if (!connectedDeviceAddress) {
+                console.log("no connected device address!!");
+                return;
+            }
+
+            if (connectedBLE) {
+                connectedBLE = false;
+                console.log("disconnecting...");
+                ble.disconnectDevice(connectedDeviceAddress);
+                connectedDeviceAddress = null;
+            }
+
+            if(!connectedWifi){
+                 console.log("connectedWifi= " + connectedWifi);
+                 setTimeout(searchCrownstones,5000);
+            }
         }
 
 	}
