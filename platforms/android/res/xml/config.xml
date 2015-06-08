@@ -17,6 +17,17 @@
     <allow-intent href="sms:*" />
     <allow-intent href="mailto:*" />
     <allow-intent href="geo:*" />
+    <feature name="Whitelist">
+        <param name="android-package" value="org.apache.cordova.whitelist.WhitelistPlugin" />
+        <param name="onload" value="true" />
+    </feature>
+    <feature name="networkinterface">
+        <param name="android-package" value="com.albahra.plugin.networkinterface.networkinterface" />
+    </feature>
+    <feature name="WifiWizard">
+        <param name="android-package" value="com.pylonproducts.wifiwizard.WifiWizard" />
+        <param name="onload" value="true" />
+    </feature>
     <feature name="BluetoothLePlugin">
         <param name="android-package" value="com.randdusing.bluetoothle.BluetoothLePlugin" />
     </feature>
@@ -31,12 +42,5 @@
     </feature>
     <feature name="NetworkStatus">
         <param name="android-package" value="org.apache.cordova.networkinformation.NetworkManager" />
-    </feature>
-    <feature name="WifiWizard">
-        <param name="android-package" value="com.pylonproducts.wifiwizard.WifiWizard" />
-        <param name="onload" value="true" />
-    </feature>
-    <feature name="networkinterface">
-        <param name="android-package" value="com.albahra.plugin.networkinterface.networkinterface" />
     </feature>
 </widget>
