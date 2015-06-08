@@ -150,7 +150,6 @@ var hub = {
 				wanted_rssi = -128;
 				wanted_name = "";
 				for (var el in map) {
-
 					if (map[el]['name'].indexOf("wifi") > -1) {
                         connectedDeviceAddress=el;
 						wanted_rssi = map[el]['rssi'];
@@ -306,15 +305,7 @@ var hub = {
 						'Wifi error',
 						'Sorry!');
 			} else {
-				navigator.notification.alert(
-						'Wifi disconnected!!',
-						function() {
-							// go back to selection page
-							$('#crownstone').hide();
-							history.back();
-						},
-						'Wifi error',
-						'Try again!');
+				disconnect();
 			}
 		}
 
@@ -371,5 +362,4 @@ var hub = {
 
 	}
 }
-
 
