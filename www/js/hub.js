@@ -298,15 +298,7 @@ var hub = {
 		}
 
 		connectionFailed = function() {
-			if (!connectedBLE) {
-				navigator.notification.alert(
-						'Could not connect to network',
-						null,
-						'Wifi error',
-						'Sorry!');
-			} else {
-				disconnect();
-			}
+			disconnect();
 		}
 
         connectAndDiscover = function(address, serviceUuid, characteristicUuid, successCB, errorCB) {
